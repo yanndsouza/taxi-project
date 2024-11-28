@@ -10,7 +10,7 @@ const PORT: Number = 8080;
 const googleMapsClient = new Client({});
 
 app.use(cors({
-  origin: ['http://localhost', 'http://localhost:80'],
+  origin: /^http:\/\/localhost(:\d+)?$/,
   methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
