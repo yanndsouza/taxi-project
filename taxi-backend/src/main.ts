@@ -1,11 +1,19 @@
 import 'dotenv/config'
-import express, { Request, Response } from "express";
+import express from "express";
+import {Express, Request, Response} from "express";
 import { Client } from "@googlemaps/google-maps-services-js";
 import { initializeDatabase } from './database';
 
-const app = express();
-const PORT = 8080;
+const cors = require('cors');
+const app: Express = express();
+const PORT: Number = 8080;
 const googleMapsClient = new Client({});
+
+app.use(cors({
+  origin: 'http://localhost',
+  methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 app.use(express.json());
 
@@ -67,7 +75,7 @@ const drivers = [
   }
 ];
 
-app.post("/ride/estimate", async (req: Request, res: Response) => {
+app.post("/ride/estimate", async (req: Request, res: Response):Promise<any> => {
   const { customer_id, origin, destination } = req.body as TripRequestBody;
 
   if (!origin || !destination || !customer_id || origin === destination) {
@@ -82,7 +90,7 @@ app.post("/ride/estimate", async (req: Request, res: Response) => {
       params: {
         origin: origin,
         destination: destination,
-        key: process.env.GOOGLE_API_KEY,
+        key: process.env.GOOGLE_API_KEY || '',
       },
     });
 
@@ -128,7 +136,7 @@ app.post("/ride/estimate", async (req: Request, res: Response) => {
   }
 });
 
-app.patch("/ride/confirm", async (req: Request, res: Response) => {
+app.patch("/ride/confirm", async (req: Request, res: Response):Promise<any> => {
   const {
     customer_id,
     origin,
@@ -209,7 +217,7 @@ app.patch("/ride/confirm", async (req: Request, res: Response) => {
   }
 });
 
-app.get("/ride/:customerId", async (req: Request, res: Response) => {
+app.get("/ride/:customerId", async (req: Request, res:Response):Promise<any> => {
   const { customerId } = req.params;
   const { driver_id } = req.query;
 
